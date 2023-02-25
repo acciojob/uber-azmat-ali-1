@@ -77,12 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public void completeTrip(Integer tripId){
 		//Complete the trip having given trip Id and update TripBooking attributes accordingly
 		TripBooking tripBooking = tripBookingRepository2.findById(tripId).get();
-		Customer customer = tripBooking.getCustomer();
-		List<TripBooking> tripBookingList=customer.getTripBookingList();
-		tripBookingList.remove(tripBooking);
 		tripBooking.setStatus(TripStatus.COMPLETED);
-		tripBookingList.add(tripBooking);
-		customer.setTripBookingList(tripBookingList);
-		customerRepository2.save(customer);
+		tripBookingRepository2.save(tripBooking);
 	}
 }
