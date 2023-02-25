@@ -2,6 +2,7 @@ package com.driver.services.impl;
 
 import com.driver.model.TripBooking;
 import com.driver.model.TripStatus;
+import com.driver.repository.CabRepository;
 import com.driver.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	TripBookingRepository tripBookingRepository2;
+	@Autowired
+	private CabRepository cabRepository;
 
 	@Override
 	public void register(Customer customer) {
@@ -61,15 +64,25 @@ public class CustomerServiceImpl implements CustomerService {
 	public void cancelTrip(Integer tripId){
 		//Cancel the trip having given trip Id and update TripBooking attributes accordingly
 		TripBooking tripBooking = tripBookingRepository2.findById(tripId).get();
+		Customer customer = tripBooking.getCustomer();
+		List<TripBooking> tripBookingList=customer.getTripBookingList();
+		tripBookingList.remove(tripBooking);
 		tripBooking.setStatus(TripStatus.CANCELED);
-		tripBookingRepository2.save(tripBooking);
+		tripBookingList.add(tripBooking);
+		customer.setTripBookingList(tripBookingList);
+		customerRepository2.save(customer);
 	}
 
 	@Override
 	public void completeTrip(Integer tripId){
 		//Complete the trip having given trip Id and update TripBooking attributes accordingly
 		TripBooking tripBooking = tripBookingRepository2.findById(tripId).get();
+		Customer customer = tripBooking.getCustomer();
+		List<TripBooking> tripBookingList=customer.getTripBookingList();
+		tripBookingList.remove(tripBooking);
 		tripBooking.setStatus(TripStatus.COMPLETED);
-		tripBookingRepository2.save(tripBooking);
+		tripBookingList.add(tripBooking);
+		customer.setTripBookingList(tripBookingList);
+		customerRepository2.save(customer);
 	}
 }
